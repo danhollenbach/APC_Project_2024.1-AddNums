@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <stbool.h>
+#include <stdbool.h>
+
+#ifdef _WIN32
+    #define CLEAR "cls"
+#else
+    #define CLEAR "clear"
+#endif
 
 // suggest global variables
 char nick[20];
@@ -10,12 +16,9 @@ char nick[20];
 // ,arquivo[20];
 // int pontuacao=0, modo=1,
 // Int tam_matriz,perdeu=0;
-// char matriz[10][10];
-// char matrizEspelho[10][10];
-// char SomaCol[20];
-// char SomaLin[20];
-// int VetContLin[10];
-// int VetContCol[10];
+char matrix[10][10], mirror[10][10];
+char lineSum[20], columnSum[20];
+int lineValue[10], columnValue[10];
 // char matriz_orig[10][10];
 // int VetContLin_orig[10];
 // int VetContCol_orig[10];
@@ -23,13 +26,12 @@ char nick[20];
 // char SomaLin_orig[20];
 
 // usar a fx system da stdlib pra limpar terminal
-
-void welcome()
+void welcome()//check
 {
-    char nick;
     printf("Welcome to AddNums!!\n");
     printf("Enter your nickname: ");
-    scanf("%c", &nick);
+    scanf("%s", &nick);
+    // printf("Hello, %s\n", nick);
 }
 void menu()
 {
@@ -56,16 +58,27 @@ void menu()
         ranking();
         break;
     case 5:
-        //  exit
+        exit(0);
         break;
     default:
         printf("Invalid choice\n");
+        clearScreen();
+        invalidChoice();
         break;
     }
 }
+void invalidChoice()//check
+{
+    printf("Invalid choice, try again\n");
+    menu();
+}
 void game()
 {
-    // fazer uma matriz de char e identacao top
+    // life 5 
+    for(int i = 0; i < 4; i++){
+        printf("%d", columnSum[i]);
+    }
+
 }
 void configurations()
 {
@@ -81,10 +94,11 @@ void configurations()
         //  dif ini, mid advanced
         // back
         break;
-    case 3
+    case 3:
         //  voltar
+        printf("Choose a option: ");
         break;
-        default: //?
+    default:
         printf("Invalid choice\n");
         break;
     }
@@ -137,9 +151,14 @@ void diffs()
         break;
     }
 }
-
+void clearScreen()// check
+{
+    system(CLEAR);
+}
 void main(void)
 {
+    // fp=fopen("ranking.txt","r");
     welcome();
+    clearScreen();
     menu();
 }

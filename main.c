@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 #ifdef _WIN32
-    #define CLEAR "cls"
+#define CLEAR "cls"
 #else
-    #define CLEAR "clear"
+#define CLEAR "clear"
 #endif
 
 // suggest global variables
@@ -25,122 +25,97 @@ int lineValues[10], columnValues[10];
 // char SomaCol_orig[20];
 // char SomaLin_orig[20];
 
+void readFile(FILE *fp)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            matrix[i][j] = fgetc(fp) - '0';
+        }
+        fgetc(fp);
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        columnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0');
+    }
+    fgetc(fp);
+    for (int i = 0; i < 4; i++)
+    {
+        lineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0');
+    }
+    fgetc(fp);
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            mirror[i][j] = fgetc(fp) - '0';
+        }
+        fgetc(fp);
+    }
+}
+void menu();
 // usar a fx system da stdlib pra limpar terminal
-void welcome()//check
+void welcome() // check
 {
     printf("Welcome to AddNums!!\n");
     printf("Enter your nickname: ");
     scanf("%s", &nick);
     // printf("Hello, %s\n", nick);
 }
-void menu()
-{
-    int choice;
-    printf("1. Play\n");
-    printf("2. Configs\n");
-    printf("3. Instructions\n");
-    printf("4. Ranking\n");
-    printf("5. Exit ;<\n");
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
-    switch (choice)
-    {
-    case 1:
-        game();
-        break;
-    case 2:
-        configurations();
-        break;
-    case 3:
-        instructions();
-        break;
-    case 4:
-        ranking();
-        break;
-    case 5:
-        exit(0);
-        break;
-    default:
-        printf("Invalid choice\n");
-        clearScreen();
-        invalidChoice();
-        break;
-    }
-}
-void invalidChoice()//check
+void invalidChoice() // check
 {
     printf("Invalid choice, try again\n");
     menu();
 }
 void game()
 {
-    // life 5 
-    switch(level)
-    {
-        case 1:
-            //  easy
-            //  life 5
-            for(int i = 0; i < 4; i++){
-            printf("%d", columnSum[i]);
-            }
-            break;
-        case 2:
-            //  medium
-            //  life 3
-            for(int i = 0; i < 4; i++){
-            printf("%d", columnSum[i]);
-            }
-            break;
-        case 3:
-            //  advanced
-            //  life 1
-            for(int i = 0; i < 4; i++){
-            printf("%d", columnSum[i]);
-            }
-            break;
-        case 4:
-            //  back
-            for(int i = 0; i < 4; i++){
-            printf("%d", columnSum[i]);
-            }
-            break;
-    }
-
-}
-void configurations()
-{
-    int choice;
-    switch (choice)
+    level = 1;
+    // life 5
+    switch (level)
     {
     case 1:
-        //  zerar ranking
-        resetRanking();
+
+        printf("Level 1\n");
+        FILE *fp;
+        fp = fopen("iniciante.txt", "r");
+        //  easy
+        //  life 5
+        readFile(fp);
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                printf(" %d ", matrix[i][j]);
+            }
+            printf("\n");
+        }
+        exit(0);
         break;
     case 2:
-        diffs();
-        //  dif ini, mid advanced
-        // back
+        //  medium
+        //  life 3
+        for (int i = 0; i < 4; i++)
+        {
+            printf("%d", columnSum[i]);
+        }
         break;
     case 3:
-        //  voltar
-        printf("Choose a option: ");
+        //  advanced
+        //  life 1
+        for (int i = 0; i < 4; i++)
+        {
+            printf("%d", columnSum[i]);
+        }
         break;
-    default:
-        printf("Invalid choice\n");
+    case 4:
+        //  back
+        for (int i = 0; i < 4; i++)
+        {
+            printf("%d", columnSum[i]);
+        }
         break;
     }
-    printf("Choose a option: ");
-    scanf("%d", &choice);
-}
-void instructions()
-{
-    //  game instructions
-}
-void ranking()
-{
-    printf("ranking :\n");
-    //  ranking
-    //  voltar
 }
 void resetRanking()
 {
@@ -178,9 +153,78 @@ void diffs()
         break;
     }
 }
-void clearScreen()// check
+void configurations()
+{
+    int choice;
+    switch (choice)
+    {
+    case 1:
+        //  zerar ranking
+        resetRanking();
+        break;
+    case 2:
+        diffs();
+        //  dif ini, mid advanced
+        // back
+        break;
+    case 3:
+        //  voltar
+        printf("Choose a option: ");
+        break;
+    default:
+        printf("Invalid choice\n");
+        break;
+    }
+    printf("Choose a option: ");
+    scanf("%d", &choice);
+}
+void instructions()
+{
+    //  game instructions
+}
+void ranking()
+{
+    printf("ranking :\n");
+    //  ranking
+    //  voltar
+}
+void clearScreen() // check
 {
     system(CLEAR);
+}
+void menu()
+{
+    int choice;
+    printf("1. Play\n");
+    printf("2. Configs\n");
+    printf("3. Instructions\n");
+    printf("4. Ranking\n");
+    printf("5. Exit ;<\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+    switch (choice)
+    {
+    case 1:
+        game();
+        break;
+    case 2:
+        configurations();
+        break;
+    case 3:
+        instructions();
+        break;
+    case 4:
+        ranking();
+        break;
+    case 5:
+        exit(0);
+        break;
+    default:
+        printf("Invalid choice\n");
+        clearScreen();
+        invalidChoice();
+        break;
+    }
 }
 void main(void)
 {

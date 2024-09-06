@@ -11,14 +11,14 @@
 
 // suggest global variables
 char nick[20];
-
+int level;
 // FILE* fp;
 // ,arquivo[20];
 // int pontuacao=0, modo=1,
 // Int tam_matriz,perdeu=0;
 char matrix[10][10], mirror[10][10];
 char lineSum[20], columnSum[20];
-int lineValue[10], columnValue[10];
+int lineValues[10], columnValues[10];
 // char matriz_orig[10][10];
 // int VetContLin_orig[10];
 // int VetContCol_orig[10];
@@ -75,8 +75,35 @@ void invalidChoice()//check
 void game()
 {
     // life 5 
-    for(int i = 0; i < 4; i++){
-        printf("%d", columnSum[i]);
+    switch(level)
+    {
+        case 1:
+            //  easy
+            //  life 5
+            for(int i = 0; i < 4; i++){
+            printf("%d", columnSum[i]);
+            }
+            break;
+        case 2:
+            //  medium
+            //  life 3
+            for(int i = 0; i < 4; i++){
+            printf("%d", columnSum[i]);
+            }
+            break;
+        case 3:
+            //  advanced
+            //  life 1
+            for(int i = 0; i < 4; i++){
+            printf("%d", columnSum[i]);
+            }
+            break;
+        case 4:
+            //  back
+            for(int i = 0; i < 4; i++){
+            printf("%d", columnSum[i]);
+            }
+            break;
     }
 
 }

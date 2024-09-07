@@ -71,6 +71,7 @@ void invalidChoice() // check
     printf("Invalid choice, try again\n");
     menu();
 }
+
 void game()
 {
     clearScreen();
@@ -79,13 +80,15 @@ void game()
     switch (level)
     {
     case 1:
-
         printf("Level 1\n");
         FILE *fp;
         fp = fopen("iniciante.txt", "r");
-        //  easy
-        //  life 5
         readFile(fp);
+        for (int i = 0; i < 4; i++)
+        {
+            printf(" %d ", columnSum[i]);
+        }
+        printf("\n");
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -93,10 +96,6 @@ void game()
                 printf(" %d ", matrix[i][j]);
             }
             printf("\n");
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            printf("%d ", columnSum[i]);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -112,23 +111,18 @@ void game()
         }
         break;
     case 2:
-        //  medium
-        //  life 3
         for (int i = 0; i < 4; i++)
         {
             printf("%d", columnSum[i]);
         }
         break;
     case 3:
-        //  advanced
-        //  life 1
         for (int i = 0; i < 4; i++)
         {
             printf("%d", columnSum[i]);
         }
         break;
     case 4:
-        //  back
         for (int i = 0; i < 4; i++)
         {
             printf("%d", columnSum[i]);

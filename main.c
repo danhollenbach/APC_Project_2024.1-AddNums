@@ -11,11 +11,16 @@
 #define CLEAR "clear"
 #endif
 
-char nick[20];
-int level;
-int lineValues[10], columnValues[10];
-char lineSum[20], columnSum[20];
-char matrix[10][10], mirror[10][10];
+typedef struct players
+{
+    char nick[20];
+    int score, level, life;
+} players;
+
+players player;
+// int easyLine[4], easyColumn[4];
+char easyLineSum[4], easyColumnSum[4], midLineSum[6], midColumnSum[6], diffLineSum[7], diffColumnSum[7]; // lines and column deletes?
+char easyMatrix[4][4], easyMirror[4][4], midMatrix[6][6], midMirror[6][6], diffMatrix[7][7], diffMirror[7][7];
 
 // suggest global variables
 // FILE* fp;
@@ -30,31 +35,32 @@ char matrix[10][10], mirror[10][10];
 
 void readFile(FILE *fp)
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) // fill the first easy mode matrix
     {
         for (int j = 0; j < 4; j++)
         {
-            matrix[i][j] = fgetc(fp) - '0';
+            easyMatrix[i][j] = fgetc(fp) - '0'; // convert char to int
         }
-        fgetc(fp);
+        fgetc(fp); // skip the space (\n)
     }
-    for (int i = 0; i < 4; i++)
+
+    for (int i = 0; i < 4; i++) // fill the first easy mode columns sums
     {
-        columnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0');
+        easyColumnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
     }
-    fgetc(fp);
-    for (int i = 0; i < 4; i++)
+    fgetc(fp);                  // skip the space (\n)
+    for (int i = 0; i < 4; i++) // fill the first easy mode lines sums
     {
-        lineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0');
+        easyLineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
     }
-    fgetc(fp);
-    for (int i = 0; i < 4; i++)
+    fgetc(fp);                  // skip the space (\n)
+    for (int i = 0; i < 4; i++) // fill the first easy mode mirror matrix
     {
         for (int j = 0; j < 4; j++)
         {
-            mirror[i][j] = fgetc(fp) - '0';
+            mirror[i][j] = fgetc(fp) - '0'; // convert char to int
         }
-        fgetc(fp);
+        fgetc(fp); // skip the space (\n)
     }
 }
 
@@ -62,7 +68,22 @@ void welcome()
 {
     printf("Welcome to AddNums!!\n");
     printf("Enter your nickname: ");
-    scanf("%s", &nick);
+    scanf("%s", player.nick);
+    int lenght = strlen(player.nick);
+    if (lenght > 20) // check if nickname is valid, less than 20 characters
+    {
+        printf("Invalid nickname, try again\n");
+        welcome();
+    }
+
+    for (int i = 0; i < lenght; i++) // check if nickname is valid, only letters, numbers, underscore and space
+    {
+        if (!isalpha(player.nick[i]) && !isdigit(player.nick[i]) && player.nick[i] != ' ' && player.nick[i] != '_')
+        {
+            printf("Invalid nickname, try again\n");
+            welcome();
+        }
+    }
     clearScreen();
 }
 
@@ -75,9 +96,9 @@ void invalidChoice() // check
 void game()
 {
     clearScreen();
-    level = 1;
+    player.level = 1;
     // life 5
-    switch (level)
+    switch (player.level)
     {
     case 1:
         printf("Level 1\n");
@@ -86,26 +107,26 @@ void game()
         readFile(fp);
         for (int i = 0; i < 4; i++)
         {
-            printf(" %d ", columnSum[i]);
+            printf(" %d ", easyColumnSum[i]);
         }
         printf("\n");
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
-                printf(" %d ", matrix[i][j]);
+                printf(" %d ", easyMatrix[i][j]);
             }
             printf("\n");
         }
         for (int i = 0; i < 4; i++)
         {
-            printf("%d ", lineSum[i]);
+            printf("%d ", easyLineSum[i]);
         }
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
-                printf(" %d ", mirror[i][j]);
+                printf(" %d ", easyMirror[i][j]);
             }
             printf("\n");
         }
@@ -113,19 +134,19 @@ void game()
     case 2:
         for (int i = 0; i < 4; i++)
         {
-            printf("%d", columnSum[i]);
+            printf("%d", easyColumnSum[i]);
         }
         break;
     case 3:
         for (int i = 0; i < 4; i++)
         {
-            printf("%d", columnSum[i]);
+            printf("%d", easyColumnSum[i]);
         }
         break;
     case 4:
         for (int i = 0; i < 4; i++)
         {
-            printf("%d", columnSum[i]);
+            printf("%d", easyColumnSum[i]);
         }
         break;
     }

@@ -33,6 +33,11 @@ char easyMatrix[4][4], easyMirror[4][4], midMatrix[6][6], midMirror[6][6], diffM
 // char SomaCol_orig[20];
 // char SomaLin_orig[20];
 
+void clearScreen() // a function to clear the screen
+{
+    system(CLEAR);
+}
+
 void readFile(FILE *fp)
 {
     for (int i = 0; i < 4; i++) // fill the first easy mode matrix
@@ -58,7 +63,7 @@ void readFile(FILE *fp)
     {
         for (int j = 0; j < 4; j++)
         {
-            mirror[i][j] = fgetc(fp) - '0'; // convert char to int
+            easyMirror[i][j] = fgetc(fp) - '0'; // convert char to int
         }
         fgetc(fp); // skip the space (\n)
     }
@@ -85,12 +90,6 @@ void welcome()
         }
     }
     clearScreen();
-}
-
-void invalidChoice() // check
-{
-    printf("Invalid choice, try again\n");
-    menu();
 }
 
 void game()
@@ -214,18 +213,24 @@ void configurations()
 }
 void instructions()
 {
-    //  game instructions
+    char anyKey[1];
+    clearScreen();
+    printf("Instructions:\n");
+    printf("-> This game is a number sum like game.\n");
+    printf("You have 5 lifes and will have to delete matrix elements to get to the lines and columns sums,\n");
+    printf("but be careful, if you delete the wrong number you will lose a life.\n");
+    printf("to delete a number just write it's 'adress'([m][n]).\n");
+    printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3\n");
+    printf("\npress any key to get back to the menu");
+    scanf("%s", anyKey);
+    clearScreen();
+    menu();
 }
 void ranking()
 {
     printf("ranking :\n");
     //  ranking
     //  voltar
-}
-
-void clearScreen()
-{
-    system(CLEAR);
 }
 
 void menu()
@@ -256,12 +261,13 @@ void menu()
         exit(0);
         break;
     default:
-        printf("Invalid choice\n");
         clearScreen();
-        invalidChoice();
+        printf("Invalid choice, try again\n");
+        menu();
         break;
     }
 }
+
 void main(void)
 {
     // fp=fopen("ranking.txt","r");

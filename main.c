@@ -1,45 +1,46 @@
-// Projeto APC - Number Sum
-// Daniel Florencio Hollenbach - 241020859
+//========================================//
+// Projeto APC - Number Sum               //
+// Daniel Florencio Hollenbach - 241020859//
+//========================================//
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <string.h> // to use the strcmp function
+#include <stdlib.h> // to use the qsort function
 
-#ifdef _WIN32
+#ifdef _WIN32 // a if def to the clear function to work either in windows or linux
 #define CLEAR "cls"
 #else
 #define CLEAR "clear"
 #endif
 
-typedef enum Difficulty
+typedef enum Difficulty // a enum to define the difficulty
 {
     easy = 4,
     mid = 6,
     dif
 } Difficulty;
-typedef struct players
+typedef struct Players  // a struct to define the players
 {
     char nick[21];
     int score;
-} players;
+} Players;
 
-Difficulty diff;
-players player;
+Difficulty diff; // a variable to define the difficulty
+Players player; // a variable to define the player
 
+// my global variables
 int level, life;
-char lineSum[7], columnSum[7]; // lines and column deletes?
+char lineSum[7], columnSum[7];
 char matrix[7][7], mirror[7][7];
 
 void clearScreen() // a function to clear the screen
 {
     system(CLEAR);
 }
-
-int compare(players *p1, players *p2) // a function to compare two strings
+int compare(Players *p1, Players *p2) // a function to compare two scores
 {
     return p2->score - p1->score;
 }
-
 void whichLevel(FILE *fp, int level) // a function to check the level
 {
     int count = 0;
@@ -53,7 +54,6 @@ void whichLevel(FILE *fp, int level) // a function to check the level
         }
     }
 }
-
 void checkFile(FILE *fp) // a function to check if the file is openning
 {
     if (fp == NULL) //
@@ -62,7 +62,6 @@ void checkFile(FILE *fp) // a function to check if the file is openning
         exit(1);
     }
 }
-
 void readFile(int level) // a function to read the file
 {
     FILE *fp;
@@ -108,16 +107,19 @@ void readFile(int level) // a function to read the file
     }
     fclose(fp);
 }
-
-void welcome()
+void welcome()  // a welcome screen
 {
+    clearScreen();
     printf("Welcome to AddNums!!\n");
     printf("Enter your nickname: ");
+    fflush(stdin);
     scanf("%s", player.nick);
+    fflush(stdin);
     int lenght = strlen(player.nick);
     if (lenght > 20) // check if nickname is valid, less than 20 characters
     {
         printf("Invalid nickname, try again\n");
+        waitInput();
         welcome();
     }
 
@@ -126,34 +128,44 @@ void welcome()
         if (!isalpha(player.nick[i]) && !isdigit(player.nick[i]) && player.nick[i] != ' ' && player.nick[i] != '_')
         {
             printf("Invalid nickname, try again\n");
+            waitInput();
             welcome();
         }
     }
     clearScreen();
 }
 
-void game()
+void game() // the game indeed
 {
     clearScreen();
-    // life 5
     readFile(level);
+    // print the columns sums
     for (int i = 0; i < diff; i++)
     {
-        printf(" %d ", columnSum[i]);
+        if(i==0) printf("     %d ", columnSum[i]); // print the first column sum
+        else if(columnSum[i] > 9) printf("%d ", columnSum[i]);      // print the others column sums
+        else printf(" %d ", columnSum[i]);
     }
-    printf("\n");
+    printf("\n   -------------\n");
+
     for (int i = 0; i < diff; i++)
     {
+        printf("%d", lineSum[i]); // print the lines sums
+        if(lineSum[i] > 9) printf(" ");
+        else printf("  ");
+        printf("|");
+
         for (int j = 0; j < diff; j++)
         {
-            printf(" %d ", matrix[i][j]);
+            printf(" %d ", matrix[i][j]); // print the matrix
         }
         printf("\n");
     }
-    for (int i = 0; i < diff; i++)
-    {
-        printf("%d ", lineSum[i]);
-    }
+    // for (int i = 0; i < diff; i++)
+    // {
+    //     printf("%d ", lineSum[i]);
+    // }
+    printf("\n");
     for (int i = 0; i < diff; i++)
     {
         for (int j = 0; j < diff; j++)
@@ -162,8 +174,16 @@ void game()
         }
         printf("\n");
     }
+    waitInput();
 }
 
+void waitInput() // a function to wait for the user to press some key
+{
+    printf("Press <Enter> to continue\n");
+    fflush(stdin);
+    getchar();
+    fflush(stdin);
+}
 void resetRanking() // a function to reset the ranking
 {
     char choice;
@@ -175,10 +195,12 @@ void resetRanking() // a function to reset the ranking
         checkFile(fp_ranking);
         fclose(fp_ranking);
         printf("Ranking reseted\n");
+        waitInput();
     }
     else if (choice == 'n')
     {
         printf("Ranking not reseted\n");
+        waitInput();
     }
     else
     {
@@ -186,78 +208,89 @@ void resetRanking() // a function to reset the ranking
         resetRanking();
     }
 }
-void diffs()
+void diffs()    // a function to show and set the difficulties
 {
-    int choice;
+    clearScreen();
+    char choice;
     printf("1. Easy\n");
     printf("2. Medium\n");
     printf("3. Advanced\n");
     printf("4. Back\n");
     printf("Choose a option: ");
-    scanf("%d", &choice);
+    choice = getchar();
     switch (choice)
     {
-    case 1:
+    case '1':
+        diff = easy;
         printf("You chose easy\n");
-        //  easy
+        waitInput();
         break;
-    case 2:
+    case '2':
+        diff = mid;
         printf("You chose medium\n");
-        //  medium
+        waitInput();
         break;
-    case 3:
+    case '3':
+        diff = dif;
         printf("You chose advanced\n");
-        //  advanced
+        waitInput();
         break;
-    case 4:
-        //  back
+    case '4':
+        configurations();
         break;
     default:
         printf("Invalid choice\n");
+        diffs();
         break;
     }
 }
-void configurations()
+void configurations()   // a function to show and set the configurations
 {
-    int choice;
+    clearScreen();
+    char choice;
+    printf("Configurations:\n");
+    printf("1. Reset ranking\n");
+    printf("2. Difficulty\n");
+    printf("3. Back\n");
+    fflush(stdin);
+    printf("Choose a option: ");
+    choice = getchar();
+    fflush(stdin);
     switch (choice)
     {
-    case 1:
-        //  zerar ranking
+    case '1':
         resetRanking();
+        configurations();
         break;
-    case 2:
+    case '2':
         diffs();
-        //  dif ini, mid advanced
-        // back
+        configurations();
         break;
-    case 3:
-        //  voltar
-        printf("Choose a option: ");
+    case '3':
+        menu();
         break;
     default:
+        clearScreen();
         printf("Invalid choice\n");
+        configurations();
         break;
     }
-    printf("Choose a option: ");
-    scanf("%d", &choice);
 }
-void instructions()
+void instructions() // a function to show the instructions
 {
-    char anyKey[1];
     clearScreen();
     printf("Instructions:\n");
     printf("-> This game is a number sum like game.\n");
     printf("You have 5 lifes and will have to delete matrix elements to get to the lines and columns sums,\n");
     printf("but be careful, if you delete the wrong number you will lose a life.\n");
-    printf("to delete a number just write it's 'adress'([m][n]).\n");
+    printf("To delete a number just write it's 'adress'([m][n]).\n");
     printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3\n");
-    printf("\npress any key to get back to the menu");
-    scanf("%s", anyKey);
+    printf("\npress <Enter> to get back to the menu");
+    getchar();
     clearScreen();
     menu();
 }
-void ranking()
+void ranking()  // a function to show the ranking
 {
     clearScreen();
     FILE *fp_ranking = fopen("ranking.bin", "rb");
@@ -265,16 +298,16 @@ void ranking()
     printf("ranking :\n");
     while (1)
     {
-        players others;
+        Players others;
         int read = fread(&others, sizeof(player), 1, fp_ranking);
-        if (read == 0) break;   // end of file
+        if (read == 0)
+            break; // end of file
         printf("%s %d\n", others.nick, others.score);
-    } 
+    }
     printf("\n\npress <Enter> to get back to the menu");
     getchar();
-   
 }
-void updateRanking()  // a function to update the ranking
+void updateRanking() // a function to update the ranking
 {
     FILE *fp_ranking = fopen("ranking.bin", "rb+");
     if (fp_ranking == NULL)
@@ -285,15 +318,17 @@ void updateRanking()  // a function to update the ranking
         fclose(fp_ranking);
         return;
     }
-    fseek(fp_ranking, 0, SEEK_END);     //go to the end of the file
+    fseek(fp_ranking, 0, SEEK_END); // go to the end of the file
     int size = ftell(fp_ranking) / sizeof(player);
     size++;
-    fseek(fp_ranking, 0, SEEK_SET);     // back to the beginning
-    players ranking[size];
+    fseek(fp_ranking, 0, SEEK_SET); // back to the beginning
+    Players ranking[size];
     fread(ranking, sizeof(player), size, fp_ranking);
     int found = 0;
-    for(int i = 0; i < size - 1; i++){
-        if(strcmp(player.nick, ranking[i].nick) == 0){
+    for (int i = 0; i < size - 1; i++)
+    {
+        if (strcmp(player.nick, ranking[i].nick) == 0)
+        {
             ranking[i].score += player.score;
             player.score = 0;
             found = 1;
@@ -303,17 +338,17 @@ void updateRanking()  // a function to update the ranking
     if (!found)
     {
         ranking[size - 1] = player;
-    }else{
+    }
+    else
+    {
         size--;
-        
-
     }
     qsort(ranking, size, sizeof(player), compare);
     fseek(fp_ranking, 0, SEEK_SET);
     fwrite(ranking, sizeof(player), size, fp_ranking);
     fclose(fp_ranking);
 }
-void menu()
+void menu() // a function to show the main menu of the game
 {
     clearScreen();
     char choice;
@@ -350,23 +385,15 @@ void menu()
         break;
     }
 }
-void main(void)
+void main(void) // main function with the game loop
 {
-    diff = mid;
-    level = 3;
-    char *str = "player1";
-    strcpy(player.nick, str);
-    player.score = 500;
-    updateRanking();
-    player.score = 600;
-    updateRanking();
-    ranking();
-    return 0;
-    // fp=fopen("ranking.txt","r");
+    diff = easy;
+    level = 0;
+    life  = 5;
     welcome();
-    while(1){
+    while (1)
+    {
         menu();
     }
-
     return 0;
 }

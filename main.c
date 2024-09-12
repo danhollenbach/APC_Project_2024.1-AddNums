@@ -1,9 +1,9 @@
+// Projeto APC - Number Sum
+// Daniel Florencio Hollenbach - 241020859
+
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stdbool.h>
 #include <string.h>
-#include <ctype.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #define CLEAR "cls"
@@ -11,62 +11,102 @@
 #define CLEAR "clear"
 #endif
 
+typedef enum Difficulty
+{
+    easy = 4,
+    mid = 6,
+    dif
+} Difficulty;
 typedef struct players
 {
-    char nick[20];
-    int score, level, life;
+    char nick[21];
+    int score;
 } players;
 
+Difficulty diff;
 players player;
-// int easyLine[4], easyColumn[4];
-char easyLineSum[4], easyColumnSum[4], midLineSum[6], midColumnSum[6], diffLineSum[7], diffColumnSum[7]; // lines and column deletes?
-char easyMatrix[4][4], easyMirror[4][4], midMatrix[6][6], midMirror[6][6], diffMatrix[7][7], diffMirror[7][7];
 
-// suggest global variables
-// FILE* fp;
-// ,arquivo[20];
-// int pontuacao=0, modo=1,
-// Int tam_matriz,perdeu=0;
-// char matriz_orig[10][10];
-// int VetContLin_orig[10];
-// int VetContCol_orig[10];
-// char SomaCol_orig[20];
-// char SomaLin_orig[20];
+int level, life;
+char lineSum[7], columnSum[7]; // lines and column deletes?
+char matrix[7][7], mirror[7][7];
 
 void clearScreen() // a function to clear the screen
 {
     system(CLEAR);
 }
 
-void readFile(FILE *fp)
+int compare(players *p1, players *p2) // a function to compare two strings
 {
-    for (int i = 0; i < 4; i++) // fill the first easy mode matrix
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            easyMatrix[i][j] = fgetc(fp) - '0'; // convert char to int
-        }
-        fgetc(fp); // skip the space (\n)
-    }
+    return p2->score - p1->score;
+}
 
-    for (int i = 0; i < 4; i++) // fill the first easy mode columns sums
+void whichLevel(FILE *fp, int level) // a function to check the level
+{
+    int count = 0;
+    while (count != level)
     {
-        easyColumnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
-    }
-    fgetc(fp);                  // skip the space (\n)
-    for (int i = 0; i < 4; i++) // fill the first easy mode lines sums
-    {
-        easyLineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
-    }
-    fgetc(fp);                  // skip the space (\n)
-    for (int i = 0; i < 4; i++) // fill the first easy mode mirror matrix
-    {
-        for (int j = 0; j < 4; j++)
+        char c = fgetc(fp);
+        if (c == '*')
         {
-            easyMirror[i][j] = fgetc(fp) - '0'; // convert char to int
+            count++;
+            fgetc(fp); // skip the space (\n)
+        }
+    }
+}
+
+void checkFile(FILE *fp) // a function to check if the file is openning
+{
+    if (fp == NULL) //
+    {
+        printf("Error opening file\n");
+        exit(1);
+    }
+}
+
+void readFile(int level) // a function to read the file
+{
+    FILE *fp;
+    switch (diff) // check which file to open
+    {
+    case easy:
+        fp = fopen("iniciante.txt", "r");
+        break;
+    case mid:
+        fp = fopen("intermediario.txt", "r");
+        break;
+    case dif:
+        fp = fopen("avancadi.txt", "r");
+        break;
+    }
+    checkFile(fp);
+    whichLevel(fp, level);
+    for (int i = 0; i < diff; i++) // fill the first easy mode matrix
+    {
+        for (int j = 0; j < diff; j++)
+        {
+            matrix[i][j] = fgetc(fp) - '0'; // convert char to int
         }
         fgetc(fp); // skip the space (\n)
     }
+    for (int i = 0; i < diff; i++) // fill the first easy mode columns sums
+    {
+        columnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
+    }
+    fgetc(fp);                     // skip the space (\n)
+    for (int i = 0; i < diff; i++) // fill the first easy mode lines sums
+    {
+        lineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
+    }
+    fgetc(fp);                     // skip the space (\n)
+    for (int i = 0; i < diff; i++) // fill the first easy mode mirror matrix
+    {
+        for (int j = 0; j < diff; j++)
+        {
+            mirror[i][j] = fgetc(fp) - '0'; // convert char to int
+        }
+        fgetc(fp); // skip the space (\n)
+    }
+    fclose(fp);
 }
 
 void welcome()
@@ -95,65 +135,56 @@ void welcome()
 void game()
 {
     clearScreen();
-    player.level = 1;
     // life 5
-    switch (player.level)
+    readFile(level);
+    for (int i = 0; i < diff; i++)
     {
-    case 1:
-        printf("Level 1\n");
-        FILE *fp;
-        fp = fopen("iniciante.txt", "r");
-        readFile(fp);
-        for (int i = 0; i < 4; i++)
+        printf(" %d ", columnSum[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < diff; i++)
+    {
+        for (int j = 0; j < diff; j++)
         {
-            printf(" %d ", easyColumnSum[i]);
+            printf(" %d ", matrix[i][j]);
         }
         printf("\n");
-        for (int i = 0; i < 4; i++)
+    }
+    for (int i = 0; i < diff; i++)
+    {
+        printf("%d ", lineSum[i]);
+    }
+    for (int i = 0; i < diff; i++)
+    {
+        for (int j = 0; j < diff; j++)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                printf(" %d ", easyMatrix[i][j]);
-            }
-            printf("\n");
+            printf(" %d ", mirror[i][j]);
         }
-        for (int i = 0; i < 4; i++)
-        {
-            printf("%d ", easyLineSum[i]);
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                printf(" %d ", easyMirror[i][j]);
-            }
-            printf("\n");
-        }
-        break;
-    case 2:
-        for (int i = 0; i < 4; i++)
-        {
-            printf("%d", easyColumnSum[i]);
-        }
-        break;
-    case 3:
-        for (int i = 0; i < 4; i++)
-        {
-            printf("%d", easyColumnSum[i]);
-        }
-        break;
-    case 4:
-        for (int i = 0; i < 4; i++)
-        {
-            printf("%d", easyColumnSum[i]);
-        }
-        break;
+        printf("\n");
     }
 }
-void resetRanking()
+
+void resetRanking() // a function to reset the ranking
 {
+    char choice;
     printf("Are you sure you want to reset the ranking? (y/n): ");
-    //  reset ranking
+    choice = getchar();
+    if (choice == 'y')
+    {
+        FILE *fp_ranking = fopen("ranking.bin", "wb");
+        checkFile(fp_ranking);
+        fclose(fp_ranking);
+        printf("Ranking reseted\n");
+    }
+    else if (choice == 'n')
+    {
+        printf("Ranking not reseted\n");
+    }
+    else
+    {
+        printf("Invalid choice\n");
+        resetRanking();
+    }
 }
 void diffs()
 {
@@ -228,36 +259,88 @@ void instructions()
 }
 void ranking()
 {
+    clearScreen();
+    FILE *fp_ranking = fopen("ranking.bin", "rb");
+    checkFile(fp_ranking);
     printf("ranking :\n");
-    //  ranking
-    //  voltar
+    while (1)
+    {
+        players others;
+        int read = fread(&others, sizeof(player), 1, fp_ranking);
+        if (read == 0) break;   // end of file
+        printf("%s %d\n", others.nick, others.score);
+    } 
+    printf("\n\npress <Enter> to get back to the menu");
+    getchar();
+   
 }
+void updateRanking()  // a function to update the ranking
+{
+    FILE *fp_ranking = fopen("ranking.bin", "rb+");
+    if (fp_ranking == NULL)
+    {
+        fp_ranking = fopen("ranking.bin", "wb");
+        checkFile(fp_ranking);
+        fwrite(&player, sizeof(player), 1, fp_ranking);
+        fclose(fp_ranking);
+        return;
+    }
+    fseek(fp_ranking, 0, SEEK_END);     //go to the end of the file
+    int size = ftell(fp_ranking) / sizeof(player);
+    size++;
+    fseek(fp_ranking, 0, SEEK_SET);     // back to the beginning
+    players ranking[size];
+    fread(ranking, sizeof(player), size, fp_ranking);
+    int found = 0;
+    for(int i = 0; i < size - 1; i++){
+        if(strcmp(player.nick, ranking[i].nick) == 0){
+            ranking[i].score += player.score;
+            player.score = 0;
+            found = 1;
+            break;
+        }
+    }
+    if (!found)
+    {
+        ranking[size - 1] = player;
+    }else{
+        size--;
+        
 
+    }
+    qsort(ranking, size, sizeof(player), compare);
+    fseek(fp_ranking, 0, SEEK_SET);
+    fwrite(ranking, sizeof(player), size, fp_ranking);
+    fclose(fp_ranking);
+}
 void menu()
 {
-    int choice;
+    clearScreen();
+    char choice;
     printf("1. Play\n");
     printf("2. Configs\n");
     printf("3. Instructions\n");
     printf("4. Ranking\n");
     printf("5. Exit ;<\n");
     printf("Enter your choice: ");
-    scanf("%d", &choice);
+    fflush(stdin);
+    choice = getchar();
+    fflush(stdin);
     switch (choice)
     {
-    case 1:
+    case '1':
         game();
         break;
-    case 2:
+    case '2':
         configurations();
         break;
-    case 3:
+    case '3':
         instructions();
         break;
-    case 4:
+    case '4':
         ranking();
         break;
-    case 5:
+    case '5':
         exit(0);
         break;
     default:
@@ -267,10 +350,23 @@ void menu()
         break;
     }
 }
-
 void main(void)
 {
+    diff = mid;
+    level = 3;
+    char *str = "player1";
+    strcpy(player.nick, str);
+    player.score = 500;
+    updateRanking();
+    player.score = 600;
+    updateRanking();
+    ranking();
+    return 0;
     // fp=fopen("ranking.txt","r");
     welcome();
-    menu();
+    while(1){
+        menu();
+    }
+
+    return 0;
 }

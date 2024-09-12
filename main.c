@@ -135,6 +135,21 @@ void welcome()  // a welcome screen
     clearScreen();
 }
 
+void checkElements(){
+    int line, column;
+    
+    printf("Choose a line and a column: \n");
+    scanf("%d %d", &line, &column);
+    for (int i = 0; i < diff; i++)
+    {
+        for (int j = 0; j < diff; j++)
+        {
+            printf(" %d ", mirror[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 void game() // the game indeed
 {
     clearScreen();
@@ -161,19 +176,8 @@ void game() // the game indeed
         }
         printf("\n");
     }
-    // for (int i = 0; i < diff; i++)
-    // {
-    //     printf("%d ", lineSum[i]);
-    // }
     printf("\n");
-    for (int i = 0; i < diff; i++)
-    {
-        for (int j = 0; j < diff; j++)
-        {
-            printf(" %d ", mirror[i][j]);
-        }
-        printf("\n");
-    }
+    checkElements();
     waitInput();
 }
 

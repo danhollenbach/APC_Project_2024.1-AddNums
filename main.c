@@ -19,14 +19,14 @@ typedef enum Difficulty // a enum to define the difficulty
     mid = 6,
     dif
 } Difficulty;
-typedef struct Players  // a struct to define the players
+typedef struct Players // a struct to define the players
 {
     char nick[21];
     int score;
 } Players;
 
 Difficulty diff; // a variable to define the difficulty
-Players player; // a variable to define the player
+Players player;  // a variable to define the player
 
 // my global variables
 int level, life;
@@ -107,7 +107,7 @@ void readFile(int level) // a function to read the file
     }
     fclose(fp);
 }
-void welcome()  // a welcome screen
+void welcome() // a welcome screen
 {
     clearScreen();
     printf("Welcome to AddNums!!\n");
@@ -135,50 +135,97 @@ void welcome()  // a welcome screen
     clearScreen();
 }
 
-void checkElements(){
-    int line, column;
-    
-    printf("Choose a line and a column: \n");
-    scanf("%d %d", &line, &column);
-    for (int i = 0; i < diff; i++)
+void checkElements() // check if the element can be erased
+{
+    char line, column;
+    printf("Choose a line and a column: ");
+    // scanf("%d %d", &line, &column);
+    line = getchar();
+    column = getchar();
+    line -= '0';
+    column -= '0';
+    if (line >= diff || column >= diff)
     {
-        for (int j = 0; j < diff; j++)
-        {
-            printf(" %d ", mirror[i][j]);
-        }
-        printf("\n");
+        printf("Invalid element, try again\n");
+        checkElements();
     }
+    if (mirror[line][column] == 0)
+    {
+        matrix[line][column] = 0;
+    }
+    else
+    {
+        life--;
+        printf("Wrong element, you have %d lifes\n", life);
+        if (life == 0)
+        {
+            printf("Game Over\n");
+            player.score = 0;
+            updateRanking();
+            waitInput();
+            menu();
+        }
+    }
+    printMatrix();
+    checkElements();
 }
+
+
+//     for (int i = 0; i < diff; i++)
+//     {
+//         for (int j = 0; j < diff; j++)
+//         {
+//             if (mirror[line][column] == 0)
+//             {
+//                 matrix[line][column] = 0;
+//             }
+//         }
+//         printf("\n");
+//     }
+// }
 
 void game() // the game indeed
 {
     clearScreen();
     readFile(level);
+    printMatrix(); // print the matrix
+    printf("\n");
+    checkElements();
+    waitInput();
+}
+
+void printMatrix() // a function to print the matrix
+{
+    clearScreen();
     // print the columns sums
     for (int i = 0; i < diff; i++)
     {
-        if(i==0) printf("     %d ", columnSum[i]); // print the first column sum
-        else if(columnSum[i] > 9) printf("%d ", columnSum[i]);      // print the others column sums
-        else printf(" %d ", columnSum[i]);
+        if (i == 0)
+            printf("     %d ", columnSum[i]); // print the first column sum
+        else if (columnSum[i] > 9)
+            printf("%d ", columnSum[i]); // print the others column sums
+        else
+            printf(" %d ", columnSum[i]);
     }
     printf("\n   -------------\n");
 
     for (int i = 0; i < diff; i++)
     {
         printf("%d", lineSum[i]); // print the lines sums
-        if(lineSum[i] > 9) printf(" ");
-        else printf("  ");
+        if (lineSum[i] > 9)
+            printf(" ");
+        else
+            printf("  ");
         printf("|");
 
         for (int j = 0; j < diff; j++)
         {
+            if (matrix[i][j] == 0)
+                printf("   ");            // print a blank space
             printf(" %d ", matrix[i][j]); // print the matrix
         }
         printf("\n");
     }
-    printf("\n");
-    checkElements();
-    waitInput();
 }
 
 void waitInput() // a function to wait for the user to press some key
@@ -212,7 +259,7 @@ void resetRanking() // a function to reset the ranking
         resetRanking();
     }
 }
-void diffs()    // a function to show and set the difficulties
+void diffs() // a function to show and set the difficulties
 {
     clearScreen();
     char choice;
@@ -248,7 +295,7 @@ void diffs()    // a function to show and set the difficulties
         break;
     }
 }
-void configurations()   // a function to show and set the configurations
+void configurations() // a function to show and set the configurations
 {
     clearScreen();
     char choice;
@@ -294,7 +341,7 @@ void instructions() // a function to show the instructions
     clearScreen();
     menu();
 }
-void ranking()  // a function to show the ranking
+void ranking() // a function to show the ranking
 {
     clearScreen();
     FILE *fp_ranking = fopen("ranking.bin", "rb");
@@ -393,11 +440,10 @@ void main(void) // main function with the game loop
 {
     diff = easy;
     level = 0;
-    life  = 5;
+    life = 5;
     welcome();
     while (1)
     {
         menu();
     }
-    return 0;
 }

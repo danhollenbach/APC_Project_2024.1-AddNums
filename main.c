@@ -135,75 +135,83 @@ void welcome() // a welcome screen
     clearScreen();
 }
 
+void checkSums(int line, int column) // check if the line sum is correct
+{
+    int lineSumLeft = 0, columnSumLeft = 0;
+    for (int i = 0; i < diff; i++) // check the line sum
+    {
+        lineSumLeft += matrix[line][i];
+        columnSumLeft += matrix[i][columnSumLeft];
+    }
+    if (lineSumLeft == lineSum[line])
+    {
+        lineSum[line] = 0;
+        printf("Right, you got a line !!!\n");
+        waitInput();
+    }
+    if (columnSumLeft == columnSum[column])
+    {
+        columnSum[column] = 0;
+        printf("Right, you got a column !!!\n");
+        waitInput();
+    }
+}
 void checkElements() // check if the element can be erased
 {
     char line, column;
     printf("Choose a line and a column: ");
-    // scanf("%d %d", &line, &column);
-    line = getchar();
-    column = getchar();
+    scanf("%c %c", &line, &column);
     line -= '0';
     column -= '0';
-    if (line >= diff || column >= diff)
+    line--;
+    column--;
+    if (line >= diff || column >= diff || line < 0 || column < 0) // check if the element is within the matrix deepth
     {
         printf("Invalid element, try again\n");
-        checkElements();
+        return;
     }
     if (mirror[line][column] == 0)
     {
         matrix[line][column] = 0;
+        checkSums(line, column);
+        printf("Right, you got it !!\n");
     }
     else
     {
         life--;
         printf("Wrong element, you have %d lifes\n", life);
-        if (life == 0)
-        {
-            printf("Game Over\n");
-            player.score = 0;
-            updateRanking();
-            waitInput();
-            menu();
-        }
+        printf("\n");
     }
-    printMatrix();
-    checkElements();
 }
-
-
-//     for (int i = 0; i < diff; i++)
-//     {
-//         for (int j = 0; j < diff; j++)
-//         {
-//             if (mirror[line][column] == 0)
-//             {
-//                 matrix[line][column] = 0;
-//             }
-//         }
-//         printf("\n");
-//     }
-// }
-
 void game() // the game indeed
 {
     clearScreen();
     readFile(level);
-    printMatrix(); // print the matrix
-    printf("\n");
-    checkElements();
-    waitInput();
+    while (1)
+    {
+        printMatrix(); // print the matrix
+        printf("\n");
+        checkElements();
+        if (life == 0)
+        {
+            life = 5;
+            printf("Game Over\n");
+            updateRanking();
+            waitInput();
+            break;
+        }
+        waitInput();
+    }
 }
-
 void printMatrix() // a function to print the matrix
 {
     clearScreen();
-    // print the columns sums
-    for (int i = 0; i < diff; i++)
+    for (int i = 0; i < diff; i++) // print the columns sums
     {
         if (i == 0)
             printf("     %d ", columnSum[i]); // print the first column sum
         else if (columnSum[i] > 9)
-            printf("%d ", columnSum[i]); // print the others column sums
+            printf("%d ", columnSum[i]); // print the others columns sums
         else
             printf(" %d ", columnSum[i]);
     }
@@ -211,23 +219,27 @@ void printMatrix() // a function to print the matrix
 
     for (int i = 0; i < diff; i++)
     {
-        printf("%d", lineSum[i]); // print the lines sums
-        if (lineSum[i] > 9)
-            printf(" ");
+        if (lineSum[i] == 0)
+        {
+            printf("  ", lineSum[i]);
+        }
+        else if (lineSum[i] > 9)
+            printf("%d", lineSum[i]); // print the lines sums
         else
-            printf("  ");
+            printf(" %d", lineSum[i]);
+        printf(" ");
         printf("|");
 
-        for (int j = 0; j < diff; j++)
+        for (int j = 0; j < diff; j++) // print matrix elements
         {
             if (matrix[i][j] == 0)
-                printf("   ");            // print a blank space
-            printf(" %d ", matrix[i][j]); // print the matrix
+                printf("   "); // print a blank space of erased elements
+            else
+                printf(" %d ", matrix[i][j]); // print the others matrix elemnts
         }
         printf("\n");
     }
 }
-
 void waitInput() // a function to wait for the user to press some key
 {
     printf("Press <Enter> to continue\n");
@@ -323,6 +335,7 @@ void configurations() // a function to show and set the configurations
     default:
         clearScreen();
         printf("Invalid choice\n");
+        waitInput();
         configurations();
         break;
     }
@@ -432,6 +445,7 @@ void menu() // a function to show the main menu of the game
     default:
         clearScreen();
         printf("Invalid choice, try again\n");
+        waitInput();
         menu();
         break;
     }
@@ -441,6 +455,7 @@ void main(void) // main function with the game loop
     diff = easy;
     level = 0;
     life = 5;
+
     welcome();
     while (1)
     {

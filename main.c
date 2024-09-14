@@ -141,7 +141,7 @@ void checkSums(int line, int column) // check if the line sum is correct
     for (int i = 0; i < diff; i++) // check the line sum
     {
         lineSumLeft += matrix[line][i];
-        columnSumLeft += matrix[i][columnSumLeft];
+        columnSumLeft += matrix[i][column];
     }
     if (lineSumLeft == lineSum[line])
     {
@@ -156,6 +156,7 @@ void checkSums(int line, int column) // check if the line sum is correct
         waitInput();
     }
 }
+
 void checkElements() // check if the element can be erased
 {
     char line, column;
@@ -208,7 +209,10 @@ void printMatrix() // a function to print the matrix
     clearScreen();
     for (int i = 0; i < diff; i++) // print the columns sums
     {
-        if (i == 0)
+        if (columnSum[i] == 0)
+        {
+            printf("   ", columnSum[i]);
+        }else if (i == 0)
             printf("     %d ", columnSum[i]); // print the first column sum
         else if (columnSum[i] > 9)
             printf("%d ", columnSum[i]); // print the others columns sums

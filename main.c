@@ -138,6 +138,7 @@ void welcome() // a welcome screen
 void checkSums(int line, int column) // check if the line sum is correct
 {
     int lineSumLeft = 0, columnSumLeft = 0;
+    int completedLines = 0, completedColumns = 0;
     for (int i = 0; i < diff; i++) // check the line sum
     {
         lineSumLeft += matrix[line][i];
@@ -145,15 +146,27 @@ void checkSums(int line, int column) // check if the line sum is correct
     }
     if (lineSumLeft == lineSum[line])
     {
+        completedLines++;
         lineSum[line] = 0;
         printf("Right, you got a line !!!\n");
         waitInput();
     }
     if (columnSumLeft == columnSum[column])
     {
+        completedColumns++;
         columnSum[column] = 0;
         printf("Right, you got a column !!!\n");
         waitInput();
+    }
+    if (completedLines == diff && completedColumns == diff)
+    {
+        clearScreen();
+        printf("Congratulations, you won !!!\n");
+        player.score += 50;
+        updateRanking();
+        waitInput();
+        level++;
+        game();
     }
 }
 
@@ -184,6 +197,7 @@ void checkElements() // check if the element can be erased
         printf("\n");
     }
 }
+
 void game() // the game indeed
 {
     clearScreen();
@@ -212,7 +226,8 @@ void printMatrix() // a function to print the matrix
         if (columnSum[i] == 0)
         {
             printf("   ", columnSum[i]);
-        }else if (i == 0)
+        }
+        else if (i == 0)
             printf("     %d ", columnSum[i]); // print the first column sum
         else if (columnSum[i] > 9)
             printf("%d ", columnSum[i]); // print the others columns sums

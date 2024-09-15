@@ -30,6 +30,7 @@ Players player;  // a variable to define the player
 
 // my global variables
 int level, life;
+int completedLines, completedColumns;
 char lineSum[7], columnSum[7];
 char matrix[7][7], mirror[7][7];
 
@@ -134,11 +135,9 @@ void welcome() // a welcome screen
     }
     clearScreen();
 }
-
 void checkSums(int line, int column) // check if the line sum is correct
 {
     int lineSumLeft = 0, columnSumLeft = 0;
-    int completedLines = 0, completedColumns = 0;
     for (int i = 0; i < diff; i++) // check the line sum
     {
         lineSumLeft += matrix[line][i];
@@ -158,7 +157,7 @@ void checkSums(int line, int column) // check if the line sum is correct
         printf("Right, you got a column !!!\n");
         waitInput();
     }
-    if (completedLines == diff && completedColumns == diff)
+    if ((completedLines == diff) && (completedColumns == diff))
     {
         clearScreen();
         printf("Congratulations, you won !!!\n");
@@ -166,10 +165,18 @@ void checkSums(int line, int column) // check if the line sum is correct
         updateRanking();
         waitInput();
         level++;
-        game();
+        if(level == 5){
+            diff++;
+            level = 0;
+            if(diff > 7){
+                printf("You won the game!!\n");
+                waitInput();
+                diff = 4;
+            }
+        }
+        menu();
     }
 }
-
 void checkElements() // check if the element can be erased
 {
     char line, column;
@@ -197,11 +204,12 @@ void checkElements() // check if the element can be erased
         printf("\n");
     }
 }
-
 void game() // the game indeed
 {
     clearScreen();
     readFile(level);
+    completedLines = 0;
+    completedColumns = 0;
     while (1)
     {
         printMatrix(); // print the matrix
@@ -226,6 +234,7 @@ void printMatrix() // a function to print the matrix
         if (columnSum[i] == 0)
         {
             printf("   ", columnSum[i]);
+            if (i == 0) printf("    ", columnSum[i]);
         }
         else if (i == 0)
             printf("     %d ", columnSum[i]); // print the first column sum

@@ -76,7 +76,7 @@ void readFile(int level) // a function to read the file
         fp = fopen("intermediario.txt", "r");
         break;
     case dif:
-        fp = fopen("avancadi.txt", "r");
+        fp = fopen("avancado.txt", "r");
         break;
     }
     checkFile(fp);
@@ -164,13 +164,13 @@ void checkSums(int line, int column) // check if the line sum and the column sum
         switch (diff) // differents scores for different difficulties
         {
         case easy:
-            player.score += 50; // mudar pro certo
+            player.score += 50;
             break;
         case mid:
-            player.score += 100; // mudar pro certo
+            player.score += 100;
             break;
         case dif:
-            player.score += 150; // mudar pro certo
+            player.score += 200;
             break;
         }
         updateRanking();
@@ -178,7 +178,10 @@ void checkSums(int line, int column) // check if the line sum and the column sum
         level++;        // go to the next level
         if (level == 4) // go to the next difficulty
         {
-            diff++;
+            if (diff == 4)
+                diff = 6;
+            else
+                diff++;
             level = 0;
             if (diff > 7) // if the game is over
             {
@@ -263,10 +266,10 @@ void printMatrix() // a function to print the matrix
         printf("\n   -------------\n");
         break;
     case mid:
-        printf("\n   -----------------\n");
+        printf("\n   -------------------\n");
         break;
     case dif:
-        printf("\n   --------------------\n");
+        printf("\n   -----------------------\n");
         break;
     }
     for (int i = 0; i < diff; i++) // print the lines sums and the matrix elements
@@ -401,7 +404,7 @@ void instructions() // a function to show the instructions
     printf("but be careful, if you delete the wrong number you will lose a life.\n");
     printf("To delete a number just write it's 'adress'([m][n]).\n");
     printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3\n");
-    printf("\n");   
+    printf("\n");
     waitInput();
     clearScreen();
     menu();
@@ -409,19 +412,19 @@ void instructions() // a function to show the instructions
 void ranking() // a function to show the ranking
 {
     clearScreen();
-    FILE *fp_ranking = fopen("ranking.bin", "rb");
-    checkFile(fp_ranking);
+    FILE *fp_ranking = fopen("ranking.bin", "rb"); // open the ranking file
+    checkFile(fp_ranking);                         // check if the file is openning
     printf("ranking :\n");
     while (1)
     {
-        Players others;
+        Players others; // a variable to store the other players
         int read = fread(&others, sizeof(player), 1, fp_ranking);
-        if (read == 0)
-            break; // end of file
+        if (read == 0) // don't print players with score 0
+            break;     // end of file
         printf("%s %d\n", others.nick, others.score);
     }
-    printf("\n\npress <Enter> to get back to the menu");
-    getchar();
+    printf("\n\n");
+    waitInput();
 }
 void updateRanking() // a function to update the ranking
 {
@@ -502,11 +505,29 @@ void menu() // a function to show the main menu of the game
         break;
     }
 }
-void main(void) // main function with the game loop
+void main(void) // main function with the menu loop
 {
     diff = easy;
     level = 0;
     life = 5;
+
+    // printf("\x1b[1;30m"); //
+    // waitInput();
+    // printf("\x1b[1;31m"); //red
+    // waitInput();
+    // printf("\x1b[1;32m"); //green
+    // waitInput();
+    // printf("\x1b[1;33m"); // yellow
+    // waitInput();
+    // printf("\x1b[1;34m"); // blue
+    // waitInput();
+    // printf("\x1b[1;35m"); //purple
+    // waitInput();
+    // printf("\x1b[1;36m"); //cyan
+    // waitInput();
+    // printf("\x1b[1;37m"); // white
+    // waitInput();
+    // printf("\x1b[0m"); //reset
 
     welcome();
     while (1)
@@ -514,4 +535,3 @@ void main(void) // main function with the game loop
         menu();
     }
 }
-//========================================//erro de passar dificuldade e ida e volta do avancado

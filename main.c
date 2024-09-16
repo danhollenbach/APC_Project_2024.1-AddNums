@@ -506,7 +506,7 @@ void menu() // a function to show the main menu of the game
     yellow();
     printf("4. Ranking\n");
     red();
-    printf("5. Exit ;<\n");
+    printf("5. Exit\n");
     resetColor();
     printf("Enter your choice: ");
     fflush(stdin); // clear the buffer
@@ -540,7 +540,7 @@ void menu() // a function to show the main menu of the game
 void main(void) // main function with the menu loop
 {
     // set the initial values
-    diff = easy; 
+    diff = easy;
     level = 0;
     life = 5;
 

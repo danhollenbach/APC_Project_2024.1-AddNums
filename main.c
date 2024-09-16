@@ -3,7 +3,7 @@
 // Daniel Florencio Hollenbach - 241020859//
 //========================================//
 
-#include <stdio.h>
+#include <stdio.h>  // standard c input output library to use the printf and scanf functions
 #include <string.h> // to use the strcmp function
 #include <stdlib.h> // to use the qsort function
 
@@ -12,7 +12,8 @@
 #else
 #define CLEAR "clear"
 #endif
-
+// to the monitors
+// i did some comments to easy the understanding and therefor the correction of the code...i hope it helps you guys 👍
 typedef enum Difficulty // a enum to define the difficulty
 {
     easy = 4,
@@ -57,7 +58,7 @@ void whichLevel(FILE *fp, int level) // a function to check the level
 }
 void checkFile(FILE *fp) // a function to check if the file is openning
 {
-    if (fp == NULL) //
+    if (fp == NULL)
     {
         printf("Error opening file\n");
         exit(1);
@@ -80,7 +81,7 @@ void readFile(int level) // a function to read the file
     }
     checkFile(fp);
     whichLevel(fp, level);
-    for (int i = 0; i < diff; i++) // fill the first easy mode matrix
+    for (int i = 0; i < diff; i++) // fill the matrix
     {
         for (int j = 0; j < diff; j++)
         {
@@ -88,17 +89,17 @@ void readFile(int level) // a function to read the file
         }
         fgetc(fp); // skip the space (\n)
     }
-    for (int i = 0; i < diff; i++) // fill the first easy mode columns sums
+    for (int i = 0; i < diff; i++) // fill the columns sums
     {
         columnSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
     }
     fgetc(fp);                     // skip the space (\n)
-    for (int i = 0; i < diff; i++) // fill the first easy mode lines sums
+    for (int i = 0; i < diff; i++) // fill the lines sums
     {
         lineSum[i] = (fgetc(fp) - '0') * 10 + (fgetc(fp) - '0'); // turns the first number into a ten and convert char to int
     }
     fgetc(fp);                     // skip the space (\n)
-    for (int i = 0; i < diff; i++) // fill the first easy mode mirror matrix
+    for (int i = 0; i < diff; i++) // fill the mirror matrix
     {
         for (int j = 0; j < diff; j++)
         {
@@ -113,9 +114,9 @@ void welcome() // a welcome screen
     clearScreen();
     printf("Welcome to AddNums!!\n");
     printf("Enter your nickname: ");
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     scanf("%s", player.nick);
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     int lenght = strlen(player.nick);
     if (lenght > 20) // check if nickname is valid, less than 20 characters
     {
@@ -123,7 +124,6 @@ void welcome() // a welcome screen
         waitInput();
         welcome();
     }
-
     for (int i = 0; i < lenght; i++) // check if nickname is valid, only letters, numbers, underscore and space
     {
         if (!isalpha(player.nick[i]) && !isdigit(player.nick[i]) && player.nick[i] != ' ' && player.nick[i] != '_')
@@ -135,40 +135,53 @@ void welcome() // a welcome screen
     }
     clearScreen();
 }
-void checkSums(int line, int column) // check if the line sum is correct
+void checkSums(int line, int column) // check if the line sum and the column sum is correct
 {
     int lineSumLeft = 0, columnSumLeft = 0;
-    for (int i = 0; i < diff; i++) // check the line sum
+    for (int i = 0; i < diff; i++) // check the line sum left and the column sum left
     {
         lineSumLeft += matrix[line][i];
         columnSumLeft += matrix[i][column];
     }
-    if (lineSumLeft == lineSum[line])
+    if (lineSumLeft == lineSum[line]) // check if the line sum is complete
     {
         completedLines++;
         lineSum[line] = 0;
         printf("Right, you got a line !!!\n");
         waitInput();
     }
-    if (columnSumLeft == columnSum[column])
+    if (columnSumLeft == columnSum[column]) // check if the column sum is complete
     {
         completedColumns++;
         columnSum[column] = 0;
         printf("Right, you got a column !!!\n");
         waitInput();
     }
-    if ((completedLines == diff) && (completedColumns == diff))
+    if ((completedLines == diff) && (completedColumns == diff)) // when the level is complete
     {
         clearScreen();
         printf("Congratulations, you won !!!\n");
-        player.score += 50;
+        switch (diff) // differents scores for different difficulties
+        {
+        case easy:
+            player.score += 50; // mudar pro certo
+            break;
+        case mid:
+            player.score += 100; // mudar pro certo
+            break;
+        case dif:
+            player.score += 150; // mudar pro certo
+            break;
+        }
         updateRanking();
         waitInput();
-        level++;
-        if(level == 5){
+        level++;        // go to the next level
+        if (level == 4) // go to the next difficulty
+        {
             diff++;
             level = 0;
-            if(diff > 7){
+            if (diff > 7) // if the game is over
+            {
                 printf("You won the game!!\n");
                 waitInput();
                 diff = 4;
@@ -182,22 +195,22 @@ void checkElements() // check if the element can be erased
     char line, column;
     printf("Choose a line and a column: ");
     scanf("%c %c", &line, &column);
-    line -= '0';
-    column -= '0';
-    line--;
-    column--;
+    line -= '0';                                                  // convert char to int
+    column -= '0';                                                // convert char to int
+    line--;                                                       // adjust the line
+    column--;                                                     // adjust the column
     if (line >= diff || column >= diff || line < 0 || column < 0) // check if the element is within the matrix deepth
     {
         printf("Invalid element, try again\n");
         return;
     }
-    if (mirror[line][column] == 0)
+    if (mirror[line][column] == 0) // compare the mirror matrix with the matrix
     {
-        matrix[line][column] = 0;
-        checkSums(line, column);
+        matrix[line][column] = 0; // condition to be erased
+        checkSums(line, column);  // do the math
         printf("Right, you got it !!\n");
     }
-    else
+    else // lose a life
     {
         life--;
         printf("Wrong element, you have %d lifes\n", life);
@@ -207,19 +220,19 @@ void checkElements() // check if the element can be erased
 void game() // the game indeed
 {
     clearScreen();
-    readFile(level);
-    completedLines = 0;
-    completedColumns = 0;
-    while (1)
+    readFile(level);      // read the file for a especific level
+    completedLines = 0;   // reset/initialize the completed lines
+    completedColumns = 0; // reset/initialize the completed columns
+    while (1)             // game loop
     {
         printMatrix(); // print the matrix
         printf("\n");
-        checkElements();
-        if (life == 0)
+        checkElements(); // check the elements
+        if (life == 0)   // loose condition
         {
             life = 5;
             printf("Game Over\n");
-            updateRanking();
+            updateRanking(); // update the ranking          obs. (i didn't know if it were meant to be this way due to the nonspecifics instructions, but i did it anyway...my bad)
             waitInput();
             break;
         }
@@ -231,30 +244,41 @@ void printMatrix() // a function to print the matrix
     clearScreen();
     for (int i = 0; i < diff; i++) // print the columns sums
     {
-        if (columnSum[i] == 0)
+        if (columnSum[i] == 0) // if the column sum is 0 print some blank spaces
         {
             printf("   ", columnSum[i]);
-            if (i == 0) printf("    ", columnSum[i]);
+            if (i == 0) // if first column sum
+                printf("    ", columnSum[i]);
         }
         else if (i == 0)
             printf("     %d ", columnSum[i]); // print the first column sum
         else if (columnSum[i] > 9)
-            printf("%d ", columnSum[i]); // print the others columns sums
+            printf("%d ", columnSum[i]); // print the others columns sums if a ten
         else
-            printf(" %d ", columnSum[i]);
+            printf(" %d ", columnSum[i]); // print the others columns sums if not a ten
     }
-    printf("\n   -------------\n");
-
-    for (int i = 0; i < diff; i++)
+    switch (diff) // differents indentations for different difficulties
     {
-        if (lineSum[i] == 0)
+    case easy:
+        printf("\n   -------------\n");
+        break;
+    case mid:
+        printf("\n   -----------------\n");
+        break;
+    case dif:
+        printf("\n   --------------------\n");
+        break;
+    }
+    for (int i = 0; i < diff; i++) // print the lines sums and the matrix elements
+    {
+        if (lineSum[i] == 0) // if the line sum is 0 print some blank spaces
         {
             printf("  ", lineSum[i]);
         }
         else if (lineSum[i] > 9)
-            printf("%d", lineSum[i]); // print the lines sums
+            printf("%d", lineSum[i]); // print the others columns sums if a ten
         else
-            printf(" %d", lineSum[i]);
+            printf(" %d", lineSum[i]); // print the others columns sums if not a ten
         printf(" ");
         printf("|");
 
@@ -263,7 +287,7 @@ void printMatrix() // a function to print the matrix
             if (matrix[i][j] == 0)
                 printf("   "); // print a blank space of erased elements
             else
-                printf(" %d ", matrix[i][j]); // print the others matrix elemnts
+                printf(" %d ", matrix[i][j]); // print the others matrix elements
         }
         printf("\n");
     }
@@ -271,16 +295,16 @@ void printMatrix() // a function to print the matrix
 void waitInput() // a function to wait for the user to press some key
 {
     printf("Press <Enter> to continue\n");
-    fflush(stdin);
-    getchar();
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
+    getchar();     // get a random character just to work as a pause
+    fflush(stdin); // clear the buffer
 }
 void resetRanking() // a function to reset the ranking
 {
     char choice;
     printf("Are you sure you want to reset the ranking? (y/n): ");
     choice = getchar();
-    if (choice == 'y')
+    if (choice == 'y') // opens the ranking.bin and write nothing in it, making the file empty
     {
         FILE *fp_ranking = fopen("ranking.bin", "wb");
         checkFile(fp_ranking);
@@ -288,12 +312,12 @@ void resetRanking() // a function to reset the ranking
         printf("Ranking reseted\n");
         waitInput();
     }
-    else if (choice == 'n')
+    else if (choice == 'n') // if the player doesn't want to reset the ranking
     {
         printf("Ranking not reseted\n");
         waitInput();
     }
-    else
+    else // if the player doesn't choose a valid option
     {
         printf("Invalid choice\n");
         resetRanking();
@@ -309,7 +333,7 @@ void diffs() // a function to show and set the difficulties
     printf("4. Back\n");
     printf("Choose a option: ");
     choice = getchar();
-    switch (choice)
+    switch (choice) // set the difficulty
     {
     case '1':
         diff = easy;
@@ -343,10 +367,10 @@ void configurations() // a function to show and set the configurations
     printf("1. Reset ranking\n");
     printf("2. Difficulty\n");
     printf("3. Back\n");
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     printf("Choose a option: ");
     choice = getchar();
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     switch (choice)
     {
     case '1':
@@ -377,8 +401,8 @@ void instructions() // a function to show the instructions
     printf("but be careful, if you delete the wrong number you will lose a life.\n");
     printf("To delete a number just write it's 'adress'([m][n]).\n");
     printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3\n");
-    printf("\npress <Enter> to get back to the menu");
-    getchar();
+    printf("\n");   
+    waitInput();
     clearScreen();
     menu();
 }
@@ -490,3 +514,4 @@ void main(void) // main function with the game loop
         menu();
     }
 }
+//========================================//erro de passar dificuldade e ida e volta do avancado

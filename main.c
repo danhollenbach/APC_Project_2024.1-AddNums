@@ -14,6 +14,7 @@
 #endif
 // to the monitors
 // i did some comments to easy the understanding and therefor the correction of the code...i hope it helps you guys 👍
+// please run the code with the updated files cause teacher Carla's files are not working properly
 typedef enum Difficulty // a enum to define the difficulty
 {
     easy = 4,
@@ -36,14 +37,14 @@ char lineSum[7], columnSum[7];
 char matrix[7][7], mirror[7][7];
 
 // Colors
-void black() { printf("\x1b[1;30m"); }
-void red() { printf("\x1b[1;31m"); }
-void green() { printf("\x1b[1;32m"); }
-void yellow() { printf("\x1b[1;33m"); }
-void blue() { printf("\x1b[1;34m"); }
-void purple() { printf("\x1b[1;35m"); }
-void cyan() { printf("\x1b[1;36m"); }
-void white() { printf("\x1b[1;37m"); }
+void black() { printf("\x1b[0;30m"); }
+void red() { printf("\x1b[0;31m"); }
+void green() { printf("\x1b[0;32m"); }
+void yellow() { printf("\x1b[0;33m"); }
+void blue() { printf("\x1b[0;34m"); }
+void purple() { printf("\x1b[0;35m"); }
+void cyan() { printf("\x1b[0;36m"); }
+void white() { printf("\x1b[0;37m"); }
 void resetColor() { printf("\x1b[0m"); }
 
 void clearScreen() // a function to clear the screen
@@ -226,12 +227,16 @@ void checkElements() // check if the element can be erased
     {
         matrix[line][column] = 0; // condition to be erased
         checkSums(line, column);  // do the math
+        green();
         printf("Right, you got it !!\n");
+        resetColor();
     }
     else // lose a life
     {
         life--;
+        red();
         printf("Wrong element, you have %d lifes\n", life);
+        resetColor();
         printf("\n");
     }
 }
@@ -498,6 +503,7 @@ void menu() // a function to show the main menu of the game
     resetColor();
     printf("2. Configs\n");
     printf("3. Instructions\n");
+    yellow();
     printf("4. Ranking\n");
     red();
     printf("5. Exit ;<\n");
@@ -534,8 +540,8 @@ void menu() // a function to show the main menu of the game
 void main(void) // main function with the menu loop
 {
     // set the initial values
-    diff = mid; // mudar pra easy
-    level = 3;  // mudar pra 0
+    diff = easy; 
+    level = 0;
     life = 5;
 
     welcome();

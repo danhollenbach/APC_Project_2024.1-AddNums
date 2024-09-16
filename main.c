@@ -35,6 +35,17 @@ int completedLines, completedColumns;
 char lineSum[7], columnSum[7];
 char matrix[7][7], mirror[7][7];
 
+// Colors
+void black() { printf("\x1b[1;30m"); }
+void red() { printf("\x1b[1;31m"); }
+void green() { printf("\x1b[1;32m"); }
+void yellow() { printf("\x1b[1;33m"); }
+void blue() { printf("\x1b[1;34m"); }
+void purple() { printf("\x1b[1;35m"); }
+void cyan() { printf("\x1b[1;36m"); }
+void white() { printf("\x1b[1;37m"); }
+void resetColor() { printf("\x1b[0m"); }
+
 void clearScreen() // a function to clear the screen
 {
     system(CLEAR);
@@ -428,8 +439,8 @@ void ranking() // a function to show the ranking
 }
 void updateRanking() // a function to update the ranking
 {
-    FILE *fp_ranking = fopen("ranking.bin", "rb+");
-    if (fp_ranking == NULL)
+    FILE *fp_ranking = fopen("ranking.bin", "rb+"); // open the ranking file
+    if (fp_ranking == NULL)                         // makes the file if it doesn't exist
     {
         fp_ranking = fopen("ranking.bin", "wb");
         checkFile(fp_ranking);
@@ -439,14 +450,14 @@ void updateRanking() // a function to update the ranking
     }
     fseek(fp_ranking, 0, SEEK_END); // go to the end of the file
     int size = ftell(fp_ranking) / sizeof(player);
-    size++;
+    size++;                         // add space for a possible new player
     fseek(fp_ranking, 0, SEEK_SET); // back to the beginning
-    Players ranking[size];
+    Players ranking[size];          // a raking array to store the players
     fread(ranking, sizeof(player), size, fp_ranking);
-    int found = 0;
-    for (int i = 0; i < size - 1; i++)
+    int found = 0;                     // flag to check if the player is already in the ranking
+    for (int i = 0; i < size - 1; i++) // check if the player is already in the ranking
     {
-        if (strcmp(player.nick, ranking[i].nick) == 0)
+        if (strcmp(player.nick, ranking[i].nick) == 0) // check if the string is the same and add score if it exists
         {
             ranking[i].score += player.score;
             player.score = 0;
@@ -454,32 +465,34 @@ void updateRanking() // a function to update the ranking
             break;
         }
     }
-    if (!found)
+    if (!found) // if the player is not in the ranking, it creates a new player in the ranking in the remainig space
     {
         ranking[size - 1] = player;
     }
-    else
+    else // take off the extra space
     {
         size--;
     }
-    qsort(ranking, size, sizeof(player), compare);
-    fseek(fp_ranking, 0, SEEK_SET);
-    fwrite(ranking, sizeof(player), size, fp_ranking);
-    fclose(fp_ranking);
+    qsort(ranking, size, sizeof(player), compare);     // sort the ranking
+    fseek(fp_ranking, 0, SEEK_SET);                    // back to the beginning
+    fwrite(ranking, sizeof(player), size, fp_ranking); // write the ranking
+    fclose(fp_ranking);                                // close the file
 }
 void menu() // a function to show the main menu of the game
 {
     clearScreen();
     char choice;
+    void green();
     printf("1. Play\n");
+    void resetColor();
     printf("2. Configs\n");
     printf("3. Instructions\n");
     printf("4. Ranking\n");
     printf("5. Exit ;<\n");
     printf("Enter your choice: ");
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     choice = getchar();
-    fflush(stdin);
+    fflush(stdin); // clear the buffer
     switch (choice)
     {
     case '1':
@@ -507,27 +520,10 @@ void menu() // a function to show the main menu of the game
 }
 void main(void) // main function with the menu loop
 {
+    // set the initial values
     diff = easy;
     level = 0;
     life = 5;
-
-    // printf("\x1b[1;30m"); //
-    // waitInput();
-    // printf("\x1b[1;31m"); //red
-    // waitInput();
-    // printf("\x1b[1;32m"); //green
-    // waitInput();
-    // printf("\x1b[1;33m"); // yellow
-    // waitInput();
-    // printf("\x1b[1;34m"); // blue
-    // waitInput();
-    // printf("\x1b[1;35m"); //purple
-    // waitInput();
-    // printf("\x1b[1;36m"); //cyan
-    // waitInput();
-    // printf("\x1b[1;37m"); // white
-    // waitInput();
-    // printf("\x1b[0m"); //reset
 
     welcome();
     while (1)

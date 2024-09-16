@@ -218,7 +218,11 @@ void checkElements() // check if the element can be erased
         printf("Invalid element, try again\n");
         return;
     }
-    if (mirror[line][column] == 0) // compare the mirror matrix with the matrix
+    if (matrix[line][column] == 0) // erased element
+    {
+        printf("Element erased, please try other\n");
+    }
+    else if (mirror[line][column] == 0) // compare the mirror matrix with the matrix
     {
         matrix[line][column] = 0; // condition to be erased
         checkSums(line, column);  // do the math
@@ -414,7 +418,7 @@ void instructions() // a function to show the instructions
     printf("You have 5 lifes and will have to delete matrix elements to get to the lines and columns sums,\n");
     printf("but be careful, if you delete the wrong number you will lose a life.\n");
     printf("To delete a number just write it's 'adress'([m][n]).\n");
-    printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3\n");
+    printf("For example, to delete a element in the 1st line and the 3rd column, simply give the input 1 3.\n");
     printf("\n");
     waitInput();
     clearScreen();
@@ -422,20 +426,27 @@ void instructions() // a function to show the instructions
 }
 void ranking() // a function to show the ranking
 {
+    int count = 0;
     clearScreen();
     FILE *fp_ranking = fopen("ranking.bin", "rb"); // open the ranking file
     checkFile(fp_ranking);                         // check if the file is openning
     printf("ranking :\n");
-    while (1)
+    while (1) // ranking loop
     {
         Players others; // a variable to store the other players
         int read = fread(&others, sizeof(player), 1, fp_ranking);
-        if (read == 0) // don't print players with score 0
+        count += read;
+        if (read == 0) // when the file ends
             break;     // end of file
         printf("%s %d\n", others.nick, others.score);
     }
+    if (count == 0) // if the ranking is empty
+    {
+        printf("The ranking is empty\n");
+    }
     printf("\n\n");
     waitInput();
+    menu();
 }
 void updateRanking() // a function to update the ranking
 {
@@ -482,13 +493,15 @@ void menu() // a function to show the main menu of the game
 {
     clearScreen();
     char choice;
-    void green();
+    green();
     printf("1. Play\n");
-    void resetColor();
+    resetColor();
     printf("2. Configs\n");
     printf("3. Instructions\n");
     printf("4. Ranking\n");
+    red();
     printf("5. Exit ;<\n");
+    resetColor();
     printf("Enter your choice: ");
     fflush(stdin); // clear the buffer
     choice = getchar();
@@ -521,12 +534,12 @@ void menu() // a function to show the main menu of the game
 void main(void) // main function with the menu loop
 {
     // set the initial values
-    diff = easy;
-    level = 0;
+    diff = mid; // mudar pra easy
+    level = 3;  // mudar pra 0
     life = 5;
 
     welcome();
-    while (1)
+    while (1) // menu loop
     {
         menu();
     }

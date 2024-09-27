@@ -9,7 +9,8 @@
         git clone https://github.com/danhollenbach/Projeto_APC_2024.1-AddNums.git
         ```
 
-- 2. Open the game folder in VSCode.
+- 2. Open the game folder and go to the output directory.
+  
        In the terminal, run the following command:
         ```bash
         .\'main.exe'

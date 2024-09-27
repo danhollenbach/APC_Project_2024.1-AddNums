@@ -6,7 +6,7 @@
 
         If you have git installed, you can run the following command:
         ```bash
-        git clone [https://github.com/danhollenbach/Projeto_APC_2024.1-AddNums.git](https://github.com/danhollenbach/APC_Project_2024.1-AddNums.git)
+        git clone https://github.com/danhollenbach/APC_Project_2024.1-AddNums.git
         ```
 
 - 2. Open the game folder and go to the output directory.
